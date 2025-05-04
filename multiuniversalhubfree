@@ -206,18 +206,39 @@ end)
 KeyFrame:TweenSize(UDim2.new(0, 500, 0, 450), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.5, true)  -- Smooth animation for loading
 wait(1)
 KeyFrame:TweenSize(UDim2.new(0, 500, 0, 450), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.5, true)
-SubmitButton.MouseButton1Click:Connect(function()
-    local enteredKey = KeyBox.Text
-    if enteredKey == "777" then
-        StatusLabel.Text = "Status: Key correct! Launching..."
-        wait(0.8)
-        KeyGui:Destroy()
-        
-        -- New script loading behavior
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/SCRIPT-SCRIPT/refs/heads/main/here"))()
+-- Existing SubmitButton functionality
+GetKeyButton.MouseButton1Click:Connect(function()
+    if setclipboard then
+        local success, err = pcall(function()
+            setclipboard("https://discord.gg/EZvYf4ntmK")
+        end)
+
+        if success then
+            Luna:Notification({
+                Title = "Link Copied!",
+                Content = "The Discord invite link has been copied to your clipboard.",
+                Icon = "link",
+                ImageSource = "Material",
+                Duration = 5
+            })
+        else
+            Luna:Notification({
+                Title = "Copy Failed",
+                Content = "Failed to copy the invite link. Please try again.",
+                Icon = "error",
+                ImageSource = "Material",
+                Duration = 5
+            })
+            warn("Clipboard error: " .. tostring(err))
+        end
     else
-        StatusLabel.Text = "Status: Incorrect key. Try again."
+        Luna:Notification({
+            Title = "Clipboard Unsupported",
+            Content = "Your exploit does not support clipboard functionality.",
+            Icon = "error",
+            ImageSource = "Material",
+            Duration = 5
+        })
+        warn("Clipboard function 'setclipboard' not available.")
     end
 end)
-
-KeyGui.Enabled = true
