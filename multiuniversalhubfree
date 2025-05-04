@@ -1,508 +1,223 @@
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
-
-local webhookUrl = "https://discord.com/api/webhooks/1368404248169283594/yUA2PGBijaehq-_MOTSji4uJU0bIMd1tP0PMrp4-0otP3yZ0rRXDN-dIbrINCeapwE41"
-
-local function getHWID()
-    local hwid
-    pcall(function()
-        hwid = RbxAnalyticsService:GetClientId()
-    end)
-    return hwid or "UnknownHWID"
-end
-
-local function getExecutorName()
-    if is_sirhurt_closure then
-        return "Sirhurt"
-    elseif identifyexecutor then
-        return identifyexecutor()
-    elseif syn then
-        return "Synapse X"
-    elseif wave then
-        return "Wave"
-    elseif solara then
-        return "Solara"
-    else
-        return "Unknown Executor"
-    end
-end
-
-do
-    local player = Players.LocalPlayer
-    local hwid = getHWID()
-    getgenv().USERNAME_EXECUTIONS = getgenv().USERNAME_EXECUTIONS or {}
-    getgenv().USERNAME_EXECUTIONS[player.Name] = (getgenv().USERNAME_EXECUTIONS[player.Name] or 0) + 1
-    local usernameCount = getgenv().USERNAME_EXECUTIONS[player.Name]
-
-    local success, gameInfo = pcall(function()
-        return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
-    end)
-    local gameName = success and gameInfo.Name or "Unknown Game"
-
-    local data = {
-        ["embeds"] = {{
-            ["title"] = "🔔 Script Executed",
-            ["color"] = tonumber(0x00FF00),
-            ["fields"] = {
-                {["name"] = "Username", ["value"] = player.Name, ["inline"] = true},
-                {["name"] = "User ID", ["value"] = tostring(player.UserId), ["inline"] = true},
-                {["name"] = "HWID", ["value"] = "||" .. hwid .. "||", ["inline"] = false},
-                {["name"] = "Username Execution Count", ["value"] = tostring(usernameCount), ["inline"] = true},
-                {["name"] = "Executor", ["value"] = getExecutorName(), ["inline"] = true},
-                {["name"] = "Game", ["value"] = gameName, ["inline"] = true},
-            },
-            ["thumbnail"] = {
-                ["url"] = string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", player.UserId)
-            },
-            ["footer"] = {
-                ["text"] = "Xware HUB",
-            },
-            ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
-        }}
-    }
-
-    local body = HttpService:JSONEncode(data)
-
-    local requestFunc = syn and syn.request or http_request or request or (http and http.request)
-    if requestFunc then
-        pcall(function()
-            requestFunc({
-                Url = webhookUrl,
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = body
-            })
-        end)
-    else
-        warn("No HTTP request function found for webhook.")
-    end
-end
-
--- Load Luna library
 local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/main/source.lua", true))()
 
--- Create the main window
-local Window = Luna:CreateWindow({
-    Name = "XWAREHUB (.gg/xware)",
-    Subtitle = "v1 (BETA)",
-    LogoID = nil, -- You can add your logo asset ID here if you have one
-    LoadingEnabled = true,
-    LoadingTitle = "Loading XWAREHUB",
-    LoadingSubtitle = "Please wait...",
-    
-    ConfigSettings = {
-        RootFolder = nil,
-        ConfigFolder = "LunaThreeTabs"
-    },
-    
-    KeySystem = false,
-    KeySettings = {
-        Title = "XWAREHUB KEY SYSTEM(EASY)",
-        Subtitle = "Very quick and easy.",
-        Note = "Enter your key to access the interface",
-        SaveInRoot = false,
-        SaveKey = true,
-        Key = {"ExampleKey"},
-        SecondAction = {
-            Enabled = false,
-            Type = "Link",
-            Parameter = ""
-        }
-    }
-})
--- Create the Home tab
-local homeTab = Window:CreateTab({
-    Name = "HOME",
-    Icon = "home_filled", -- English icon, no auto-localization
-    ImageSource = "Material",
-    ShowTitle = true
-})
+local KeyGui = Instance.new("ScreenGui")
+KeyGui.Name = "XWARE_KeySystem"
+KeyGui.ResetOnSpawn = false
+KeyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+KeyGui.Parent = game:GetService("CoreGui")
 
--- Create a welcome section
-homeTab:CreateSection("Welcome to XWARE HUB")
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 500, 0, 450)
+KeyFrame.Position = UDim2.new(0.5, -250, 0.5, -225)
+KeyFrame.AnchorPoint = Vector2.new(0, 0)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+KeyFrame.BackgroundTransparency = 0.15
+KeyFrame.Parent = KeyGui
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+KeyFrame.ZIndex = 2
 
--- Xware Hub Description Button
-local xwareDescriptionButton = homeTab:CreateButton({
-    Name = "Xware Hub Description",
-    Description = "Click to learn about Xware Hub.",
-    Callback = function()
-        Luna:Notification({
-            Title = "Xware Hub",
-            Content = "Xware Hub is a powerful platform bringing together the best scripts and tools for your gaming experience. Fast, easy, and constantly updated.",
-            Icon = "info", -- Material icon
-            ImageSource = "Material",
-            Duration = 5
-        })
+-- Round frame corners
+local Corner = Instance.new("UICorner", KeyFrame)
+Corner.CornerRadius = UDim.new(0, 14)
+
+-- Thicker flower-like outline effect
+local OutlineFrame = Instance.new("Frame")
+OutlineFrame.Size = UDim2.new(1, 20, 1, 20)  -- Increased size for a thicker outline
+OutlineFrame.Position = UDim2.new(0, -10, 0, -10)  -- Adjusted position to match thicker outline
+OutlineFrame.BackgroundTransparency = 1
+OutlineFrame.Parent = KeyFrame
+
+-- Create flower-like effect with UIGradient
+local FlowerOutline = Instance.new("UIGradient", OutlineFrame)
+FlowerOutline.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 100, 200)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(80, 60, 120)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 80, 180))
+})
+FlowerOutline.Rotation = 45  -- Rotated to simulate the flower-like effect
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Position = UDim2.new(0, 0, 0, 10)
+Title.BackgroundTransparency = 1
+Title.Text = "XWARE HUB — KEY SYSTEM"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 28
+Title.Parent = KeyFrame
+Title.ZIndex = 3
+
+-- Subtitle
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Size = UDim2.new(1, 0, 0, 25)
+Subtitle.Position = UDim2.new(0, 0, 0, 50)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "Enter your key to unlock the hub features below."
+Subtitle.TextColor3 = Color3.fromRGB(180, 180, 180)
+Subtitle.Font = Enum.Font.GothamBold
+Subtitle.TextSize = 16
+Subtitle.Parent = KeyFrame
+Subtitle.ZIndex = 3
+
+-- Key Input Box
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(0, 350, 0, 45)
+KeyBox.Position = UDim2.new(0.5, -175, 0, 110)
+KeyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+KeyBox.PlaceholderText = "Enter Key Here!"  -- Placeholder text
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBox.TextSize = 20
+KeyBox.Font = Enum.Font.GothamBold
+KeyBox.ClearTextOnFocus = true
+KeyBox.Parent = KeyFrame
+KeyBox.ZIndex = 3
+
+-- Remove any potential "TextBox" or other conflicting elements
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", KeyBox).Color = Color3.fromRGB(80, 80, 100)
+
+-- Submit Key Button
+local SubmitButton = Instance.new("TextButton")
+SubmitButton.Size = UDim2.new(0, 160, 0, 45)
+SubmitButton.Position = UDim2.new(0.5, -170, 0, 180)
+SubmitButton.Text = "Unlock"
+SubmitButton.Font = Enum.Font.GothamBold
+SubmitButton.TextSize = 18
+SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitButton.BackgroundColor3 = Color3.fromRGB(90, 70, 180)
+SubmitButton.Parent = KeyFrame
+SubmitButton.ZIndex = 3
+
+Instance.new("UICorner", SubmitButton).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", SubmitButton).Color = Color3.fromRGB(120, 100, 200)
+
+-- Get Key Button
+local GetKeyButton = Instance.new("TextButton")
+GetKeyButton.Size = UDim2.new(0, 160, 0, 45)
+GetKeyButton.Position = UDim2.new(0.5, 10, 0, 180)
+GetKeyButton.Text = "Get Key"
+GetKeyButton.Font = Enum.Font.GothamBold
+GetKeyButton.TextSize = 18
+GetKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GetKeyButton.BackgroundColor3 = Color3.fromRGB(50, 50, 90)
+GetKeyButton.Parent = KeyFrame
+GetKeyButton.ZIndex = 3
+
+Instance.new("UICorner", GetKeyButton).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", GetKeyButton).Color = Color3.fromRGB(90, 90, 120)
+
+-- Status Label
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, -20, 0, 25)
+StatusLabel.Position = UDim2.new(0, 10, 1, -40)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Status: Waiting for key..."
+StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.TextSize = 15
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Center
+StatusLabel.Parent = KeyFrame
+StatusLabel.ZIndex = 3
+
+-- Static Text Box-like Container (Under Toggle Buttons)
+local StaticTextBox = Instance.new("Frame")
+StaticTextBox.Size = UDim2.new(0, 460, 0, 100)
+StaticTextBox.Position = UDim2.new(0.5, -230, 0, 290)
+StaticTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+StaticTextBox.BorderSizePixel = 2
+StaticTextBox.BorderColor3 = Color3.fromRGB(80, 80, 100)
+StaticTextBox.Parent = KeyFrame
+StaticTextBox.ZIndex = 3
+
+local CornerStatic = Instance.new("UICorner")
+CornerStatic.CornerRadius = UDim.new(0, 10)
+CornerStatic.Parent = StaticTextBox
+
+-- "READ ME!" Title
+local ReadMeTitle = Instance.new("TextLabel")
+ReadMeTitle.Size = UDim2.new(1, -20, 0, 30)
+ReadMeTitle.Position = UDim2.new(0, 10, 0, 8)
+ReadMeTitle.BackgroundTransparency = 1
+ReadMeTitle.Text = "READ ME!"
+ReadMeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+ReadMeTitle.Font = Enum.Font.GothamBold
+ReadMeTitle.TextSize = 20
+ReadMeTitle.TextXAlignment = Enum.TextXAlignment.Center
+ReadMeTitle.TextYAlignment = Enum.TextYAlignment.Top
+ReadMeTitle.Parent = StaticTextBox
+ReadMeTitle.ZIndex = 3
+
+-- Static Text
+local StaticText = Instance.new("TextLabel")
+StaticText.Size = UDim2.new(1, -20, 1, -35)
+StaticText.Position = UDim2.new(0, 10, 0, 30)
+StaticText.BackgroundTransparency = 1
+StaticText.Text = "The key is very simple and quick to retrieve, all you have to do is join the discord."
+StaticText.TextColor3 = Color3.fromRGB(200, 200, 200)
+StaticText.Font = Enum.Font.Gotham
+StaticText.TextSize = 16
+StaticText.TextWrapped = true
+StaticText.TextXAlignment = Enum.TextXAlignment.Center
+StaticText.TextYAlignment = Enum.TextYAlignment.Center
+StaticText.LineHeight = 1.6
+StaticText.Parent = StaticTextBox
+StaticText.ZIndex = 3
+
+-- Add "X" button to close the GUI
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -40, 0, 10)
+CloseButton.Text = "X"
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 20
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.Parent = KeyFrame
+CloseButton.ZIndex = 4
+
+CloseButton.MouseButton1Click:Connect(function()
+    -- Unload with a smooth animation before destroying
+    KeyFrame:TweenSize(UDim2.new(0, 500, 0, 450), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.5, true)
+    wait(0.5)
+    KeyGui:Destroy()
+end)
+
+-- Button Hover Effects with animation
+SubmitButton.MouseEnter:Connect(function()
+    SubmitButton:TweenSize(UDim2.new(0, 170, 0, 50), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.2, true)
+end)
+
+SubmitButton.MouseLeave:Connect(function()
+    SubmitButton:TweenSize(UDim2.new(0, 160, 0, 45), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.2, true)
+end)
+
+GetKeyButton.MouseEnter:Connect(function()
+    GetKeyButton:TweenSize(UDim2.new(0, 180, 0, 50), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.2, true)
+end)
+
+GetKeyButton.MouseLeave:Connect(function()
+    GetKeyButton:TweenSize(UDim2.new(0, 160, 0, 45), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.2, true)
+end)
+
+-- Add effects when the GUI is loaded/unloaded
+KeyFrame:TweenSize(UDim2.new(0, 500, 0, 450), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.5, true)  -- Smooth animation for loading
+wait(1)
+KeyFrame:TweenSize(UDim2.new(0, 500, 0, 450), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.5, true)
+SubmitButton.MouseButton1Click:Connect(function()
+    local enteredKey = KeyBox.Text
+    if enteredKey == "777" then
+        StatusLabel.Text = "Status: Key correct! Launching..."
+        wait(0.8)
+        KeyGui:Destroy()
+        
+        -- New script loading behavior
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/XWAREHUBMULTIHUBUNIVERSAL/refs/heads/main/universalxwarehub"))()
+    else
+        StatusLabel.Text = "Status: Incorrect key. Try again."
     end
-})
+end)
 
--- About Me Button
-local aboutMeButton = homeTab:CreateButton({
-    Name = "About Xware Hub",
-    Description = "Click to learn more about us.",
-    Callback = function()
-        Luna:Notification({
-            Title = "About Xware Hub",
-            Content = "Xware Hub is made to improve your gaming with top-quality scripts. Simple, effective, and always evolving.",
-            Icon = "info", -- Material icon
-            ImageSource = "Material",
-            Duration = 5
-        })
-    end
-})
-
--- Credits Button
-local creditsButton = homeTab:CreateButton({
-    Name = "Credits",
-    Description = "Click to see the credits.",
-    Callback = function()
-        Luna:Notification({
-            Title = "Credits",
-            Content = "Thanks to XwareEXE and Fovlol for making Xware Hub a reality. Your hard work and dedication are greatly appreciated!",
-            Icon = "info", -- Material icon
-            ImageSource = "Material",
-            Duration = 5
-        })
-    end
-})
-
-
-
--- Discord button
-homeTab:CreateButton({
-    Name = "Join Our Discord",
-    Description = "Click to copy our invite link",
-    Callback = function()
-        setclipboard("https://discord.gg/UMVSe5XfGC") -- Replace with your real invite link
-        -- Notification to confirm the link was copied
-        Luna:Notification({
-            Title = "Discord Link Copied",
-            Content = "The Discord invite link has been copied to your clipboard.",
-            Icon = "content_copy", -- Material icon, does not affect language
-            ImageSource = "Material",
-            Duration = 5
-        })
-    end
-})
-
--- Credits Button
-local ReadMeButton = homeTab:CreateButton({
-    Name = "CLICK ME!",
-    Description = "Click me to see what I have to say >:).",
-    Callback = function()
-        Luna:Notification({
-            Title = "Suggestions/Bugs?",
-            Content = "Join the discord server to report any bugs or suggestions!",
-            Icon = "info", -- Material icon
-            ImageSource = "Material",
-            Duration = 5
-        })
-    end
-})
-
-
-local arsenalTab = Window:CreateTab({
-    Name = "ARSENAL",
-    Icon = "gavel", -- Closest weapon/combat-related icon in Material
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local arsenalButton1 = arsenalTab:CreateButton({
-    Name = "Xware Hub",
-    Description = "The best one out there",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/XWAREHUBARSENAL/refs/heads/main/Arsenal" ))()
-    end
-})
-
-local arsenalButton2 = arsenalTab:CreateButton({
-    Name = "Weed Hub",
-    Description = "Interesting name, very op",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ex55/weed-client/refs/heads/main/main.lua"))()
-    end
-})
-
-local arsenalButton3 = arsenalTab:CreateButton({
-    Name = "Zypherion Hub",
-    Description = "Very nice gui, O.P",
-    Callback = function()
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/blackowl1231/ZYPHERION/refs/heads/main/main.lua')))()
-    end
-})
-
-local arsenalButton4 = arsenalTab:CreateButton({
-    Name = "Plutonic Hub",
-    Description = "Very good arsenal script",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/OpposedDev/Plutonic/refs/heads/main/source/loader.lua"))()
-    end
-})
-
--- Create the "fisch" tab
-local fischTab = Window:CreateTab({
-    Name = "FISCH",
-    Icon = "waves", -- Material icon for water/fishing
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local fischButton1 = fischTab:CreateButton({
-    Name = "Speed Hub X",
-    Description = "One of the best",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-    end
-})
-
-local fischButton2 = fischTab:CreateButton({
-    Name = "Xware Hub",
-    Description = "The best fisch script out there",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/XWAREHUBBBB/refs/heads/main/FISCH" ))()
-    end
-})
-
-local fischButton3 = fischTab:CreateButton({
-    Name = "Nat Hub",
-    Description = "Pretty cool, great gui",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))();
-    end
-})
-
-local fischButton4 = fischTab:CreateButton({
-    Name = "Eternal Hub",
-    Description = "Very good, in a different language",
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/Vixx77/Eternal/main/EternalHub_Fish'))()
-    end
-})
-
-local fischButton5 = fischTab:CreateButton({
-    Name = "Femboy Ware",
-    Description = "Op autoshake, weird name",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/kylosilly/femboyware/refs/heads/main/Fisch.lua"))()
-    end
-})
-
--- Create the "bloxfruit" tab
-local bloxfruitTab = Window:CreateTab({
-    Name = "BLOXFRUIT",
-    Icon = "eco", -- Represents fruit or nature
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local bloxfruitButton1 = bloxfruitTab:CreateButton({
-    Name = "Speed Hub X",
-    Description = "Speed Hub is op trust",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-    end
-})
-
-local bloxfruitButton1 = bloxfruitTab:CreateButton({
-    Name = "Redz Hub",
-    Description = "Super O.P",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))()
-    end
-})
-
-local bloxfruitButton2 = bloxfruitTab:CreateButton({
-    Name = "Ganteng Hub",
-    Description = "Ganteng Hub is decent",
-    Callback = function()
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/a5c3af437cd698d64379cf75cacb9281.lua"))()
-    end
-})
-
-local bloxfruitButton3 = bloxfruitTab:CreateButton({
-    Name = "The Darkones Hub",
-    Description = "it's pretty good",
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Bloxfruits%20script'))()
-    end
-})
-
-local bloxfruitButton4 = bloxfruitTab:CreateButton({
-    Name = "Cokka Hub ",
-    Description = "this is a cracked version!",
-    Callback = function()
-        loadstring(game:HttpGet("https://you.whimper.xyz/sources/CokkaHub/main.lua"))()
-    end
-})
-
-local bloxfruitButton5 = bloxfruitTab:CreateButton({
-    Name = "RoHub",
-    Description = "this script is so op",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/RO-HUB-CODEX/RO-HUB/refs/heads/main/bloxfruits.lua"))()
-    end
-})
-
--- Create the "bluelock" tab
-local bluelockTab = Window:CreateTab({
-    Name = "BLUELOCK",
-    Icon = "sports_soccer", -- Soccer related
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-bluelockTab:CreateSection("Bluelock Section")
-
-local bluelockButton1 = bluelockTab:CreateButton({
-    Name = "Xware Hub",
-    Description = "sooo oppppp, best bluelock",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/UNIVERSAL/refs/heads/main/XWAREHUB" ))()
-    end
-})
-
-local bluelockButton2 = bluelockTab:CreateButton({
-    Name = "Yaniix",
-    Description = "Pretty good",
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/Piskasiska22222/tester/refs/heads/main/test'))()
-    end
-})
-
-local bluelockButton3 = bluelockTab:CreateButton({
-    Name = " The BillDev Hub",
-    Description = " Pretty O.P",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/selciawashere/screepts/refs/heads/main/BLRTBDMOBILEKEYSYS",true))() 
-    end
-})
-
--- Create the "deadrails" tab
-local deadRailsTab = Window:CreateTab({
-    Name = "DEADRAILS",
-    Icon = "train", -- Rail-related
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local deadRailsButton1 = deadRailsTab:CreateButton({
-    Name = "Xware Hub (Pc & Mobile)",
-    Description = "Very good and reliable script",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/Deadrails/refs/heads/main/Deadrails" ))()
-    end
-})
-
-local deadRailsButton2 = deadRailsTab:CreateButton({
-    Name = "Nat Hub",
-    Description = "Very good",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))();
-    end
-})
-
-local deadRailsButton3 = deadRailsTab:CreateButton({
-    Name = "Fern Hub",
-    Description = "Very O.P",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mrpopcatfrombupge/FernHub/refs/heads/main/DeadRailsFarm", true))()
-    end
-})
-
-local deadRailsButton4 = deadRailsTab:CreateButton({
-    Name = "Micro Hub",
-    Description = "Very nice script",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/TrustsenseDev/MicroHub/refs/heads/main/loader.lua"))()
-    end
-})
-
-local deadRailsButton5 = deadRailsTab:CreateButton({
-    Name = "Tbao Hub (Mobile)",
-    Description = "Supports mobile user specifically",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/refs/heads/main/TbaoHubDeadRails"))()
-    end
-})
-
--- Create the "bubblegum sim" tab
-local bubbleGumTab = Window:CreateTab({
-    Name = "BUBBLEGUM SIM",
-    Icon = "bubble_chart", -- Closest match for 'bubble'
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local bubbleGumButton1 = bubbleGumTab:CreateButton({
-    Name = "Monty Hub",
-    Description = "Very nice script",
-    Callback = function()
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/rayanne28/HbHub/refs/heads/main/Loader'),true))()
-    end
-})
-
-local bubbleGumButton2 = bubbleGumTab:CreateButton({
-    Name = "Speed Hub X",
-    Description = "Very O.P",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-    end
-})
-
-local bubbleGumButton3 = bubbleGumTab:CreateButton({
-    Name = "Vertex Hub",
-    Description = "Very good script",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/vertex-peak/vertex/refs/heads/main/loadstring"))()
-    end
-})
-
--- Create the "arise crossover" tab
-local ariseCrossoverTab = Window:CreateTab({
-    Name = "ARISE CROSSOVER",
-    Icon = "hub", -- Represents a hub or crossover
-    ImageSource = "Material",
-    ShowTitle = true
-})
-
-local ariseCrossoverButton1 = ariseCrossoverTab:CreateButton({
-    Name = "Xware Hub",
-    Description = "Best one out there",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/ARISE-LOADSTRING/refs/heads/main/v1"))()
-    end
-})
-
-local ariseCrossoverButton2 = ariseCrossoverTab:CreateButton({
-    Name = "Devry Hub",
-    Description = "Very nice hub",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/defnotry/devry-hub/main/arise-crossover/main.lua"))()
-    end
-})
-
-local ariseCrossoverButton3 = ariseCrossoverTab:CreateButton({
-    Name = "Reav Hub",
-    Description = "Very good script hub",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/reavscripts/hub/refs/heads/main/reavscripts.lua"))()
-    end
-})
-
-local ariseCrossoverButton4 = ariseCrossoverTab:CreateButton({
-    Name = "Sky Hub",
-    Description = "Crazy script",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/SKOIXLL/SKYLOLAND/refs/heads/main/Load.lua"))()
-    end
-})
-
--- Example notification to show when script loads
-Luna:Notification({ 
-    Title = "Interface Loaded",
-    Icon = "check_circle",
-    ImageSource = "Material",
-    Content = "Luna interface with all tabs has been loaded successfully!"
-})
+KeyGui.Enabled = true
