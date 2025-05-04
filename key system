@@ -242,3 +242,44 @@ GetKeyButton.MouseButton1Click:Connect(function()
         warn("Clipboard function 'setclipboard' not available.")
     end
 end)
+
+-- Define your correct key
+local CorrectKey = "777"
+
+SubmitButton.MouseButton1Click:Connect(function()
+    local enteredKey = KeyBox.Text
+
+    if enteredKey == CorrectKey then
+        StatusLabel.Text = "Status: Key Verified!"
+        StatusLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+
+        Luna:Notification({
+            Title = "Access Granted!",
+            Content = "You have successfully unlocked the hub.",
+            Icon = "check_circle",
+            ImageSource = "Material",
+            Duration = 4
+        })
+
+        wait(1)
+
+        -- Optional: animate GUI closing
+        KeyFrame:TweenSize(UDim2.new(0, 500, 0, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.4, true)
+        wait(0.5)
+        KeyGui:Destroy()
+
+        -- Load your actual hub script
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/SCRIPT-SCRIPT/refs/heads/main/here"))()
+    else
+        StatusLabel.Text = "Status: Invalid Key. Please try again."
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+
+        Luna:Notification({
+            Title = "Invalid Key",
+            Content = "The key you entered is incorrect.",
+            Icon = "error",
+            ImageSource = "Material",
+            Duration = 5
+        })
+    end
+end)
