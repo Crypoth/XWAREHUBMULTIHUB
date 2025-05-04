@@ -214,7 +214,7 @@ SubmitButton.MouseButton1Click:Connect(function()
         KeyGui:Destroy()
         
         -- New script loading behavior
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/XWAREHUBMULTIHUBUNIVERSAL/refs/heads/main/universalxwarehub"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Crypoth/SCRIPT-SCRIPT/refs/heads/main/here"))()
     else
         StatusLabel.Text = "Status: Incorrect key. Try again."
     end
