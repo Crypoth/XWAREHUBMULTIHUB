@@ -305,6 +305,14 @@ local bloxfruitButton1 = bloxfruitTab:CreateButton({
     end
 })
 
+local bloxfruitButton1 = bloxfruitTab:CreateButton({
+    Name = "Redz Hub",
+    Description = "Super O.P",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))()
+    end
+})
+
 local bloxfruitButton2 = bloxfruitTab:CreateButton({
     Name = "Ganteng Hub",
     Description = "Ganteng Hub is decent",
